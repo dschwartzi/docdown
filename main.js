@@ -183,12 +183,19 @@ ipcMain.handle('list-files', async (event, folderId) => {
 
   try {
     let query;
+    let orderBy = 'folder,name';
     if (folderId === '__shared__') {
       query = 'sharedWithMe = true and trashed = false';
+      orderBy = 'modifiedTime desc';
+    } else if (folderId === '__starred__') {
+      query = 'starred = true and trashed = false';
+      orderBy = 'modifiedTime desc';
+    } else if (folderId === '__recent__') {
+      query = 'trashed = false';
+      orderBy = 'viewedByMeTime desc';
     } else if (folderId) {
       query = `'${folderId}' in parents and trashed = false`;
     } else {
-      // Root: show My Drive contents
       query = `'root' in parents and trashed = false`;
     }
 
@@ -198,20 +205,10 @@ ipcMain.handle('list-files', async (event, folderId) => {
       includeItemsFromAllDrives: true,
       supportsAllDrives: true,
       fields: 'files(id, name, mimeType, modifiedTime, size, iconLink)',
-      orderBy: 'folder,name',
+      orderBy,
     });
 
-    let files = res.data.files || [];
-
-    // At root level, prepend a virtual "Shared with me" folder
-    if (!folderId) {
-      files = [
-        { id: '__shared__', name: 'Shared with me', mimeType: 'application/vnd.google-apps.folder', modifiedTime: null },
-        ...files,
-      ];
-    }
-
-    return { files };
+    return { files: res.data.files || [] };
   } catch (err) {
     if (err.code === 401) {
       store.delete('googleTokens');

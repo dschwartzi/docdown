@@ -9,80 +9,91 @@
 </head>
 <body>
   <div id="app">
-    <!-- Header -->
-    <header>
-      <div class="header-left">
-        <h1>📄 Docdown</h1>
-      </div>
-      <div class="header-right">
-        <span id="sync-folder-label" class="folder-label" title="Click to open folder">No folder selected</span>
-        <button id="btn-select-folder" class="btn btn-sm">Change Folder</button>
-        <button id="btn-sign-out" class="btn btn-sm btn-danger" style="display:none;">Sign Out</button>
-      </div>
-    </header>
-
     <!-- Auth Screen -->
     <div id="screen-auth" class="screen">
       <div class="auth-card">
-        <h2>Welcome to Docdown</h2>
-        <p>Browse your Google Drive and pull docs down as Markdown files.</p>
-
-        <div class="auth-steps">
-          <div class="auth-step">
-            <div class="step-number">1</div>
-            <div class="step-content">
-              <h3>Choose sync folder</h3>
-              <p>Select a local folder where Markdown files will be saved.</p>
-              <button id="btn-choose-folder" class="btn">Choose Folder</button>
-              <span id="folder-status" class="status-text"></span>
-            </div>
-          </div>
-
-          <div class="auth-step">
-            <div class="step-number">2</div>
-            <div class="step-content">
-              <h3>Sign in with Google</h3>
-              <p>Your browser will open to authorize read-only access to your Drive.</p>
-              <button id="btn-sign-in" class="btn btn-primary" disabled>Sign In with Google</button>
-            </div>
-          </div>
+        <img src="../assets/icon.svg" alt="Docdown" class="auth-logo">
+        <h2>Docdown</h2>
+        <p>Browse your Google Drive and pull docs down as Markdown.</p>
+        <div class="auth-actions">
+          <button id="btn-choose-folder" class="btn">Choose Sync Folder</button>
+          <span id="folder-status" class="status-text"></span>
+          <button id="btn-sign-in" class="btn btn-primary" disabled>Sign In with Google</button>
         </div>
       </div>
     </div>
 
     <!-- Browse Screen -->
     <div id="screen-browse" class="screen" style="display:none;">
-      <!-- Toolbar -->
-      <div class="toolbar">
-        <div class="toolbar-left">
-          <button id="btn-back" class="btn btn-icon" disabled title="Go back">←</button>
-          <div class="breadcrumbs" id="breadcrumbs">
-            <span class="crumb" data-id="">My Drive</span>
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="topbar-brand">
+          <img src="../assets/icon.svg" alt="" class="topbar-logo">
+          <span class="topbar-title">Docdown</span>
+        </div>
+        <div class="topbar-search">
+          <input type="text" id="search-input" placeholder="Search all files and folders..." class="search-input">
+        </div>
+        <div class="topbar-actions">
+          <span id="sync-folder-label" class="folder-label" title="Click to open folder">No folder</span>
+          <button id="btn-select-folder" class="btn btn-sm">Folder</button>
+          <button id="btn-sign-out" class="btn btn-sm btn-ghost">Sign Out</button>
+        </div>
+      </div>
+
+      <div class="main-layout">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+          <div class="nav-section">
+            <div class="nav-item active" data-source="__mydrive__">
+              <span class="nav-icon">📁</span> My Drive
+            </div>
+            <div class="nav-item" data-source="__shared__">
+              <span class="nav-icon">👥</span> Shared with me
+            </div>
+            <div class="nav-item" data-source="__starred__">
+              <span class="nav-icon">⭐</span> Starred
+            </div>
+            <div class="nav-item" data-source="__recent__">
+              <span class="nav-icon">🕐</span> Recent
+            </div>
+          </div>
+
+          <div class="nav-section nav-folder-tree" id="folder-tree">
+          </div>
+
+          <div class="sidebar-footer">
+            <span id="download-status" class="download-status"></span>
+          </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="content">
+          <!-- Breadcrumbs + actions -->
+          <div class="content-header">
+            <div class="breadcrumbs-row">
+              <button id="btn-back" class="btn btn-icon" disabled>←</button>
+              <div class="breadcrumbs" id="breadcrumbs">
+                <span class="crumb active" data-index="-1">My Drive</span>
+              </div>
+            </div>
+            <div id="selection-bar" class="selection-actions" style="display:none;">
+              <span id="selection-count">0 selected</span>
+              <button id="btn-download-selected" class="btn btn-primary btn-sm">⬇ Download .md</button>
+              <button id="btn-clear-selection" class="btn btn-sm btn-ghost">Clear</button>
+            </div>
+          </div>
+
+          <!-- File list -->
+          <div id="file-list" class="file-list">
+            <div class="loading">Loading...</div>
+          </div>
+
+          <!-- Status bar -->
+          <div class="status-bar">
+            <span id="file-count">0 items</span>
           </div>
         </div>
-        <div class="toolbar-right">
-          <input type="text" id="search-input" placeholder="Search files..." class="search-input">
-          <button id="btn-search" class="btn btn-sm">Search</button>
-          <button id="btn-clear-search" class="btn btn-sm" style="display:none;">Clear</button>
-        </div>
-      </div>
-
-      <!-- Selection bar -->
-      <div id="selection-bar" class="selection-bar" style="display:none;">
-        <span id="selection-count">0 files selected</span>
-        <button id="btn-download-selected" class="btn btn-primary btn-sm">Download as Markdown</button>
-        <button id="btn-clear-selection" class="btn btn-sm">Clear Selection</button>
-      </div>
-
-      <!-- File list -->
-      <div id="file-list" class="file-list">
-        <div class="loading">Loading files...</div>
-      </div>
-
-      <!-- Status bar -->
-      <div class="status-bar">
-        <span id="file-count">0 items</span>
-        <span id="download-status"></span>
       </div>
     </div>
   </div>
