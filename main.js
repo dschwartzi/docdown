@@ -182,18 +182,36 @@ ipcMain.handle('list-files', async (event, folderId) => {
   const drive = google.drive({ version: 'v3', auth: client });
 
   try {
-    const query = folderId
-      ? `'${folderId}' in parents and trashed = false`
-      : `'root' in parents and trashed = false`;
+    let query;
+    if (folderId === '__shared__') {
+      query = 'sharedWithMe = true and trashed = false';
+    } else if (folderId) {
+      query = `'${folderId}' in parents and trashed = false`;
+    } else {
+      // Root: show My Drive contents
+      query = `'root' in parents and trashed = false`;
+    }
 
     const res = await drive.files.list({
       q: query,
       pageSize: 200,
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true,
       fields: 'files(id, name, mimeType, modifiedTime, size, iconLink)',
       orderBy: 'folder,name',
     });
 
-    return { files: res.data.files || [] };
+    let files = res.data.files || [];
+
+    // At root level, prepend a virtual "Shared with me" folder
+    if (!folderId) {
+      files = [
+        { id: '__shared__', name: 'Shared with me', mimeType: 'application/vnd.google-apps.folder', modifiedTime: null },
+        ...files,
+      ];
+    }
+
+    return { files };
   } catch (err) {
     if (err.code === 401) {
       store.delete('googleTokens');
