@@ -14,7 +14,7 @@ const turndown = new TurndownService({
   bulletListMarker: '-',
 });
 
-// Google OAuth config
+// Google OAuth config — credentials loaded from local credentials.json (gitignored)
 const SCOPES = [
   'https://www.googleapis.com/auth/drive.readonly',
   'https://www.googleapis.com/auth/documents.readonly',
@@ -64,50 +64,21 @@ app.on('window-all-closed', () => app.quit());
 // ─── Google OAuth ───────────────────────────────────────────────
 
 function getOAuth2Client() {
-  const creds = loadClientCredentials();
-  if (!creds) return null;
   if (!oauth2Client) {
-    oauth2Client = new google.auth.OAuth2(
-      creds.client_id,
-      creds.client_secret,
-      REDIRECT_URI
-    );
+    const credsPath = path.join(__dirname, 'credentials.json');
+    if (!fs.existsSync(credsPath)) {
+      console.error('credentials.json not found in app directory');
+      return null;
+    }
+    const raw = JSON.parse(fs.readFileSync(credsPath, 'utf-8'));
+    const creds = raw.installed || raw.web || raw;
+    oauth2Client = new google.auth.OAuth2(creds.client_id, creds.client_secret, REDIRECT_URI);
   }
   return oauth2Client;
 }
 
-function loadClientCredentials() {
-  // Auto-detect credentials.json in app directory first
-  const localCreds = path.join(__dirname, 'credentials.json');
-  const credsPath = fs.existsSync(localCreds) ? localCreds : store.get('credentialsPath');
-  if (!credsPath || !fs.existsSync(credsPath)) return null;
-  try {
-    const raw = JSON.parse(fs.readFileSync(credsPath, 'utf-8'));
-    // Handle both "installed" and "web" credential formats
-    return raw.installed || raw.web || raw;
-  } catch (e) {
-    console.error('Failed to load credentials:', e);
-    return null;
-  }
-}
-
-ipcMain.handle('select-credentials-file', async () => {
-  const result = await dialog.showOpenDialog(mainWindow, {
-    title: 'Select Google OAuth credentials.json',
-    filters: [{ name: 'JSON', extensions: ['json'] }],
-    properties: ['openFile'],
-  });
-  if (result.canceled || result.filePaths.length === 0) return null;
-  const filePath = result.filePaths[0];
-  store.set('credentialsPath', filePath);
-  return filePath;
-});
-
 ipcMain.handle('google-auth', async () => {
   const client = getOAuth2Client();
-  if (!client) {
-    return { error: 'No credentials file selected. Please select your credentials.json first.' };
-  }
 
   // Check for saved tokens
   const savedTokens = store.get('googleTokens');
@@ -138,12 +109,12 @@ ipcMain.handle('google-auth', async () => {
       if (parsedUrl.pathname === '/callback') {
         const code = parsedUrl.query.code;
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end('<html><body><h2>Authentication successful!</h2><p>You can close this tab and return to GDocs Sync.</p></body></html>');
+        res.end('<html><body><h2>Authentication successful!</h2><p>You can close this tab and return to Docdown.</p></body></html>');
         server.close();
 
         try {
-          const { tokens } = await client.getToken(code);
-          client.setCredentials(tokens);
+          const { tokens } = await oauth2Client.getToken(code);
+          oauth2Client.setCredentials(tokens);
           store.set('googleTokens', tokens);
           store.set('googleCredentials', true);
           mainWindow.webContents.send('auth-status', { authenticated: true });

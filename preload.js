@@ -2,7 +2,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 
 contextBridge.exposeInMainWorld('api', {
   // Auth
-  selectCredentialsFile: () => ipcRenderer.invoke('select-credentials-file'),
   googleAuth: () => ipcRenderer.invoke('google-auth'),
   signOut: () => ipcRenderer.invoke('sign-out'),
 

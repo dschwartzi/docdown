@@ -1,6 +1,5 @@
 // ─── State ───
 let authenticated = false;
-let credsSelected = false;
 let folderSelected = false;
 let selectedFiles = new Map(); // id -> file obj
 let folderStack = []; // { id, name } for breadcrumb navigation
@@ -13,13 +12,10 @@ const screenAuth = $('#screen-auth');
 const screenBrowse = $('#screen-browse');
 
 // Auth
-const btnSelectCreds = $('#btn-select-creds');
-const credsStatus = $('#creds-status');
 const btnChooseFolder = $('#btn-choose-folder');
 const folderStatus = $('#folder-status');
 const btnSignIn = $('#btn-sign-in');
 const btnSignOut = $('#btn-sign-out');
-const linkConsole = $('#link-console');
 
 // Browse
 const btnBack = $('#btn-back');
@@ -50,15 +46,6 @@ async function init() {
 }
 
 // ─── Auth Flow ───
-btnSelectCreds.addEventListener('click', async () => {
-  const path = await window.api.selectCredentialsFile();
-  if (path) {
-    credsSelected = true;
-    credsStatus.textContent = '✓ ' + path.split('/').pop();
-    updateAuthUI();
-  }
-});
-
 btnChooseFolder.addEventListener('click', async () => {
   const folder = await window.api.selectFolder();
   if (folder) {
@@ -90,11 +77,6 @@ btnSignOut.addEventListener('click', async () => {
   showAuthScreen();
 });
 
-linkConsole.addEventListener('click', (e) => {
-  e.preventDefault();
-  // Can't open external links from renderer, but the info is there
-});
-
 btnSelectFolder.addEventListener('click', async () => {
   const folder = await window.api.selectFolder();
   if (folder) {
@@ -109,7 +91,7 @@ syncFolderLabel.addEventListener('click', () => {
 });
 
 function updateAuthUI() {
-  btnSignIn.disabled = !(credsSelected && folderSelected);
+  btnSignIn.disabled = !folderSelected;
 }
 
 function showAuthScreen() {

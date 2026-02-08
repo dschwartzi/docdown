@@ -24,22 +24,12 @@
     <!-- Auth Screen -->
     <div id="screen-auth" class="screen">
       <div class="auth-card">
-        <h2>Connect to Docdown</h2>
-        <p>To get started, you need to provide your Google OAuth credentials and sign in.</p>
+        <h2>Welcome to Docdown</h2>
+        <p>Browse your Google Drive and pull docs down as Markdown files.</p>
 
         <div class="auth-steps">
           <div class="auth-step">
             <div class="step-number">1</div>
-            <div class="step-content">
-              <h3>Select credentials.json</h3>
-              <p>Download from <a href="#" id="link-console">Google Cloud Console</a> → APIs & Services → Credentials → OAuth 2.0 Client → Download JSON</p>
-              <button id="btn-select-creds" class="btn">Select credentials.json</button>
-              <span id="creds-status" class="status-text"></span>
-            </div>
-          </div>
-
-          <div class="auth-step">
-            <div class="step-number">2</div>
             <div class="step-content">
               <h3>Choose sync folder</h3>
               <p>Select a local folder where Markdown files will be saved.</p>
@@ -49,10 +39,10 @@
           </div>
 
           <div class="auth-step">
-            <div class="step-number">3</div>
+            <div class="step-number">2</div>
             <div class="step-content">
               <h3>Sign in with Google</h3>
-              <p>A browser window will open for you to authorize access.</p>
+              <p>Your browser will open to authorize read-only access to your Drive.</p>
               <button id="btn-sign-in" class="btn btn-primary" disabled>Sign In with Google</button>
             </div>
           </div>
