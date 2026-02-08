@@ -6,6 +6,7 @@ let folderStack = [];
 let currentSource = '__mydrive__';
 let isSearchMode = false;
 let fileStatuses = new Map();
+let currentFiles = []; // track rendered files for Select All
 
 const SOURCE_LABELS = {
   '__mydrive__': 'My Drive',
@@ -29,6 +30,7 @@ const selectionBar = $('#selection-bar');
 const selectionCount = $('#selection-count');
 const btnDownloadSelected = $('#btn-download-selected');
 const btnClearSelection = $('#btn-clear-selection');
+const btnSelectAll = $('#btn-select-all');
 const fileList = $('#file-list');
 const fileCount = $('#file-count');
 const downloadStatus = $('#download-status');
@@ -171,6 +173,7 @@ async function searchFiles(query) {
 }
 
 function renderFiles(files) {
+  currentFiles = files || [];
   if (!files || files.length === 0) {
     fileList.innerHTML = '<div class="empty-state"><div class="icon">\ud83d\udced</div><p>No files found</p></div>';
     fileCount.textContent = '0 items';
@@ -282,11 +285,15 @@ btnBack.addEventListener('click', () => {
 
 // ─── Search ───
 const GDOC_URL_RE = /docs\.google\.com\/(document|spreadsheets|presentation)\/d\//;
+const FOLDER_URL_RE = /drive\.google\.com\/drive\/folders\/([a-zA-Z0-9_-]+)/;
 
 searchInput.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     const val = searchInput.value.trim();
-    if (GDOC_URL_RE.test(val)) {
+    const folderMatch = val.match(FOLDER_URL_RE);
+    if (folderMatch) {
+      openFolderUrl(folderMatch[1]);
+    } else if (GDOC_URL_RE.test(val)) {
       fetchByUrl(val);
     } else {
       searchFiles(val);
@@ -297,6 +304,14 @@ searchInput.addEventListener('keydown', (e) => {
     if (isSearchMode) switchSource(currentSource);
   }
 });
+
+async function openFolderUrl(folderId) {
+  isSearchMode = false;
+  document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
+  folderStack = [{ id: folderId, name: 'Linked Folder' }];
+  updateBreadcrumbs();
+  loadFiles(folderId);
+}
 
 async function fetchByUrl(url) {
   fileList.innerHTML = '<div class="loading">Fetching document...</div>';
@@ -334,6 +349,19 @@ btnClearSelection.addEventListener('click', () => {
     cb.checked = false;
     cb.closest('.file-item')?.classList.remove('selected');
   });
+});
+
+btnSelectAll.addEventListener('click', () => {
+  for (const file of currentFiles) {
+    if (isDownloadableType(file.mimeType) && !selectedFiles.has(file.id)) {
+      selectedFiles.set(file.id, file);
+    }
+  }
+  fileList.querySelectorAll('.file-checkbox').forEach((cb) => {
+    cb.checked = true;
+    cb.closest('.file-item')?.classList.add('selected');
+  });
+  updateSelectionUI();
 });
 
 // ─── Download ───
