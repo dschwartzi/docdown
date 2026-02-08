@@ -33,6 +33,7 @@ function createWindow() {
     minWidth: 800,
     minHeight: 500,
     title: 'Docdown',
+    icon: path.join(__dirname, 'assets', 'icon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
       contextIsolation: true,
@@ -44,6 +45,9 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
+  if (process.platform === 'darwin') {
+    app.dock.setIcon(path.join(__dirname, 'assets', 'icon.png'));
+  }
   createWindow();
 
   // Restore saved state
