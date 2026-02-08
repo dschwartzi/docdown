@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' https:;">
+  <title>Docdown</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header>
+      <div class="header-left">
+        <h1>📄 Docdown</h1>
+      </div>
+      <div class="header-right">
+        <span id="sync-folder-label" class="folder-label" title="Click to open folder">No folder selected</span>
+        <button id="btn-select-folder" class="btn btn-sm">Change Folder</button>
+        <button id="btn-sign-out" class="btn btn-sm btn-danger" style="display:none;">Sign Out</button>
+      </div>
+    </header>
+
+    <!-- Auth Screen -->
+    <div id="screen-auth" class="screen">
+      <div class="auth-card">
+        <h2>Connect to Docdown</h2>
+        <p>To get started, you need to provide your Google OAuth credentials and sign in.</p>
+
+        <div class="auth-steps">
+          <div class="auth-step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+              <h3>Select credentials.json</h3>
+              <p>Download from <a href="#" id="link-console">Google Cloud Console</a> → APIs & Services → Credentials → OAuth 2.0 Client → Download JSON</p>
+              <button id="btn-select-creds" class="btn">Select credentials.json</button>
+              <span id="creds-status" class="status-text"></span>
+            </div>
+          </div>
+
+          <div class="auth-step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+              <h3>Choose sync folder</h3>
+              <p>Select a local folder where Markdown files will be saved.</p>
+              <button id="btn-choose-folder" class="btn">Choose Folder</button>
+              <span id="folder-status" class="status-text"></span>
+            </div>
+          </div>
+
+          <div class="auth-step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+              <h3>Sign in with Google</h3>
+              <p>A browser window will open for you to authorize access.</p>
+              <button id="btn-sign-in" class="btn btn-primary" disabled>Sign In with Google</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Browse Screen -->
+    <div id="screen-browse" class="screen" style="display:none;">
+      <!-- Toolbar -->
+      <div class="toolbar">
+        <div class="toolbar-left">
+          <button id="btn-back" class="btn btn-icon" disabled title="Go back">←</button>
+          <div class="breadcrumbs" id="breadcrumbs">
+            <span class="crumb" data-id="">My Drive</span>
+          </div>
+        </div>
+        <div class="toolbar-right">
+          <input type="text" id="search-input" placeholder="Search files..." class="search-input">
+          <button id="btn-search" class="btn btn-sm">Search</button>
+          <button id="btn-clear-search" class="btn btn-sm" style="display:none;">Clear</button>
+        </div>
+      </div>
+
+      <!-- Selection bar -->
+      <div id="selection-bar" class="selection-bar" style="display:none;">
+        <span id="selection-count">0 files selected</span>
+        <button id="btn-download-selected" class="btn btn-primary btn-sm">Download as Markdown</button>
+        <button id="btn-clear-selection" class="btn btn-sm">Clear Selection</button>
+      </div>
+
+      <!-- File list -->
+      <div id="file-list" class="file-list">
+        <div class="loading">Loading files...</div>
+      </div>
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <span id="file-count">0 items</span>
+        <span id="download-status"></span>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
