@@ -281,7 +281,11 @@ ipcMain.handle('download-files', async (event, fileIds) => {
           mimeType: 'text/html',
           supportsAllDrives: true,
         });
-        content = turndown.turndown(res.data);
+        // Strip <style> blocks and Google Docs CSS noise before conversion
+        let html = res.data;
+        html = html.replace(/<style[\s\S]*?<\/style>/gi, '');
+        html = html.replace(/<head[\s\S]*?<\/head>/gi, '');
+        content = turndown.turndown(html);
       } else if (isGoogleSheet) {
         // Export as CSV
         const res = await drive.files.export({
