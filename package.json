@@ -20,6 +20,7 @@
       "preload.js",
       "renderer/**/*",
       "assets/**/*",
+      "credentials.json",
       "node_modules/**/*"
     ],
     "mac": {
