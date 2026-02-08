@@ -186,13 +186,13 @@ ipcMain.handle('list-files', async (event, folderId) => {
     let orderBy = 'folder,name';
     if (folderId === '__shared__') {
       query = 'sharedWithMe = true and trashed = false';
-      orderBy = 'modifiedTime desc';
+      orderBy = 'folder,modifiedTime desc';
     } else if (folderId === '__starred__') {
       query = 'starred = true and trashed = false';
-      orderBy = 'modifiedTime desc';
+      orderBy = 'folder,modifiedTime desc';
     } else if (folderId === '__recent__') {
       query = 'trashed = false';
-      orderBy = 'viewedByMeTime desc';
+      orderBy = 'folder,viewedByMeTime desc';
     } else if (folderId) {
       query = `'${folderId}' in parents and trashed = false`;
     } else {
@@ -202,9 +202,10 @@ ipcMain.handle('list-files', async (event, folderId) => {
     const res = await drive.files.list({
       q: query,
       pageSize: 200,
+      corpora: 'allDrives',
       includeItemsFromAllDrives: true,
       supportsAllDrives: true,
-      fields: 'files(id, name, mimeType, modifiedTime, size, iconLink)',
+      fields: 'files(id, name, mimeType, modifiedTime, size, iconLink, driveId)',
       orderBy,
     });
 
@@ -232,8 +233,11 @@ ipcMain.handle('search-files', async (event, query) => {
     const res = await drive.files.list({
       q: `name contains '${query.replace(/'/g, "\\'")}' and trashed = false`,
       pageSize: 50,
-      fields: 'files(id, name, mimeType, modifiedTime, size, iconLink)',
-      orderBy: 'modifiedTime desc',
+      corpora: 'allDrives',
+      includeItemsFromAllDrives: true,
+      supportsAllDrives: true,
+      fields: 'files(id, name, mimeType, modifiedTime, size, iconLink, driveId)',
+      orderBy: 'folder,modifiedTime desc',
     });
 
     return { files: res.data.files || [] };
