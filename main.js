@@ -76,7 +76,9 @@ function getOAuth2Client() {
 }
 
 function loadClientCredentials() {
-  const credsPath = store.get('credentialsPath');
+  // Auto-detect credentials.json in app directory first
+  const localCreds = path.join(__dirname, 'credentials.json');
+  const credsPath = fs.existsSync(localCreds) ? localCreds : store.get('credentialsPath');
   if (!credsPath || !fs.existsSync(credsPath)) return null;
   try {
     const raw = JSON.parse(fs.readFileSync(credsPath, 'utf-8'));
