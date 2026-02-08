@@ -281,13 +281,39 @@ btnBack.addEventListener('click', () => {
 });
 
 // ─── Search ───
+const GDOC_URL_RE = /docs\.google\.com\/(document|spreadsheets|presentation)\/d\//;
+
 searchInput.addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') searchFiles(searchInput.value);
+  if (e.key === 'Enter') {
+    const val = searchInput.value.trim();
+    if (GDOC_URL_RE.test(val)) {
+      fetchByUrl(val);
+    } else {
+      searchFiles(val);
+    }
+  }
   if (e.key === 'Escape') {
     searchInput.value = '';
     if (isSearchMode) switchSource(currentSource);
   }
 });
+
+async function fetchByUrl(url) {
+  fileList.innerHTML = '<div class="loading">Fetching document...</div>';
+  isSearchMode = true;
+  document.querySelectorAll('.nav-item').forEach((el) => el.classList.remove('active'));
+
+  const result = await window.api.fetchByUrl(url);
+  if (result.error) {
+    fileList.innerHTML = `<div class="empty-state"><div class="icon">\u26a0\ufe0f</div><p>${result.error}</p></div>`;
+    return;
+  }
+
+  folderStack = [];
+  updateBreadcrumbs();
+  breadcrumbs.innerHTML = '<span class="crumb active">URL Import</span>';
+  renderFiles([result.file]);
+}
 
 // ─── Selection ───
 function toggleSelection(file, checked) {

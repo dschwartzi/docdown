@@ -279,6 +279,7 @@ ipcMain.handle('download-files', async (event, fileIds) => {
         const res = await drive.files.export({
           fileId: file.id,
           mimeType: 'text/html',
+          supportsAllDrives: true,
         });
         content = turndown.turndown(res.data);
       } else if (isGoogleSheet) {
@@ -286,6 +287,7 @@ ipcMain.handle('download-files', async (event, fileIds) => {
         const res = await drive.files.export({
           fileId: file.id,
           mimeType: 'text/csv',
+          supportsAllDrives: true,
         });
         content = `# ${file.name}\n\n\`\`\`csv\n${res.data}\n\`\`\``;
       } else if (isGoogleSlides) {
@@ -293,12 +295,13 @@ ipcMain.handle('download-files', async (event, fileIds) => {
         const res = await drive.files.export({
           fileId: file.id,
           mimeType: 'text/plain',
+          supportsAllDrives: true,
         });
         content = `# ${file.name}\n\n${res.data}`;
       } else if (file.mimeType === 'text/plain' || file.mimeType === 'text/markdown') {
         // Download text files directly
         const res = await drive.files.get(
-          { fileId: file.id, alt: 'media' },
+          { fileId: file.id, alt: 'media', supportsAllDrives: true },
           { responseType: 'text' }
         );
         content = res.data;
@@ -333,4 +336,33 @@ ipcMain.handle('download-files', async (event, fileIds) => {
   }
 
   return { results };
+});
+
+// ─── Download by URL ─────────────────────────────────────────────
+
+ipcMain.handle('fetch-by-url', async (event, url) => {
+  const client = getOAuth2Client();
+  if (!client) return { error: 'Not authenticated' };
+
+  const savedTokens = store.get('googleTokens');
+  if (savedTokens) client.setCredentials(savedTokens);
+
+  // Extract document ID from various Google Docs/Sheets/Slides URL formats
+  const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (!match) return { error: 'Could not extract document ID from URL' };
+
+  const fileId = match[1];
+  const drive = google.drive({ version: 'v3', auth: client });
+
+  try {
+    const meta = await drive.files.get({
+      fileId,
+      fields: 'id, name, mimeType, modifiedTime, size, iconLink',
+      supportsAllDrives: true,
+    });
+
+    return { file: meta.data };
+  } catch (err) {
+    return { error: `Could not access file: ${err.message}` };
+  }
 });

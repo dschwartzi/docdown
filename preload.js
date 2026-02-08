@@ -13,6 +13,7 @@ contextBridge.exposeInMainWorld('api', {
   // Drive
   listFiles: (folderId) => ipcRenderer.invoke('list-files', folderId),
   searchFiles: (query) => ipcRenderer.invoke('search-files', query),
+  fetchByUrl: (url) => ipcRenderer.invoke('fetch-by-url', url),
 
   // Download
   downloadFiles: (files) => ipcRenderer.invoke('download-files', files),
