@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Privacy Policy - Docdown</title>
+  <style>
+    :root {
+      --bg: #0a0b10;
+      --card: #12141f;
+      --border: #1e2035;
+      --text: #e4e4ec;
+      --muted: #7b7f9e;
+      --primary: #5b8def;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+    a { color: var(--primary); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+    .back { display: inline-block; margin-bottom: 32px; font-size: 14px; color: var(--muted); }
+    .back:hover { color: var(--primary); }
+    h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .updated { font-size: 13px; color: var(--muted); margin-bottom: 40px; }
+    h2 { font-size: 20px; font-weight: 600; margin-top: 36px; margin-bottom: 12px; }
+    p, li { font-size: 15px; color: var(--muted); margin-bottom: 12px; }
+    ul { padding-left: 24px; }
+    li { margin-bottom: 8px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a href="/" class="back">&larr; Back to Docdown</a>
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: February 9, 2026</p>
+
+    <h2>Overview</h2>
+    <p>Docdown is an open-source desktop application that helps you download your Google Docs, Sheets, and Slides as Markdown files. We are committed to protecting your privacy. This policy explains what data Docdown accesses, how it is used, and your rights.</p>
+
+    <h2>Data We Access</h2>
+    <p>When you sign in with Google, Docdown requests the following read-only permissions:</p>
+    <ul>
+      <li><strong>Google Drive (read-only)</strong> - To browse and list your files and folders</li>
+      <li><strong>Google Docs (read-only)</strong> - To export documents as Markdown</li>
+      <li><strong>Google Sheets (read-only)</strong> - To export spreadsheets as CSV/Markdown</li>
+    </ul>
+    <p>Docdown can only <strong>read</strong> your files. It cannot modify, delete, or share any of your Google Drive content.</p>
+
+    <h2>Data Storage</h2>
+    <ul>
+      <li><strong>Local only.</strong> All downloaded files are saved to a folder you choose on your computer. No data is sent to any server, database, or third party.</li>
+      <li><strong>Authentication tokens</strong> are stored locally on your machine using the system keychain/credential store. They are never transmitted anywhere.</li>
+      <li><strong>No analytics.</strong> Docdown does not collect usage data, telemetry, crash reports, or any other analytics.</li>
+      <li><strong>No cookies.</strong> Docdown does not use cookies or any web tracking mechanisms.</li>
+    </ul>
+
+    <h2>Third-Party Services</h2>
+    <p>Docdown communicates only with Google's APIs (Drive, Docs, Sheets) to authenticate you and access your files. No other third-party services are used. No data is shared with any third party.</p>
+
+    <h2>Data Retention</h2>
+    <p>Docdown does not retain any of your data. Your Google authentication token is stored locally and can be revoked at any time by:</p>
+    <ul>
+      <li>Signing out within the app</li>
+      <li>Revoking access at <a href="https://myaccount.google.com/permissions">Google Account Permissions</a></li>
+    </ul>
+
+    <h2>Children's Privacy</h2>
+    <p>Docdown is not directed at children under the age of 13. We do not knowingly collect personal information from children.</p>
+
+    <h2>Changes to This Policy</h2>
+    <p>We may update this policy from time to time. Changes will be posted on this page with an updated date. Continued use of Docdown after changes constitutes acceptance of the updated policy.</p>
+
+    <h2>Open Source</h2>
+    <p>Docdown is fully open source under the MIT License. You can inspect the entire codebase at <a href="https://github.com/dschwartzi/docdown">github.com/dschwartzi/docdown</a> to verify these privacy claims.</p>
+
+    <h2>Contact</h2>
+    <p>If you have questions about this privacy policy, please open an issue on our <a href="https://github.com/dschwartzi/docdown/issues">GitHub repository</a>.</p>
+  </div>
+</body>
+</html>
